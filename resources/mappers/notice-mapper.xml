@@ -22,7 +22,6 @@
 	
 	<update id="updateNotice">
 		UPDATE NOTICE_TBL SET NOTICE_SUBJECT = #{noticeSubject }, NOTICE_CONTENT = #{noticeContent } WHERE NOTICE_NO = #{noticeNo }
-		
 	</update>
 
 	<delete id="deleteNotice" >
@@ -35,6 +34,10 @@
 	
 	<select id="selectOneByNo" resultMap="noticeResultMap">
 		SELECT * FROM NOTICE_TBL WHERE NOTICE_NO = #{noticeNo }
+	</select>
+	
+	<select id="getTotalCount" resultType="_int">
+		SELECT COUNT(*) FROM NOTICE_TBL	
 	</select>
 	
 </mapper>

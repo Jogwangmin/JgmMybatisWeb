@@ -54,5 +54,51 @@ public class NoticeDAO {
 		return notice;
 	}
 
+	private int getTotalCount(SqlSession session) {
+		int totalCount = session.selectOne("NoticeMapper.getTotalCount");
+		return totalCount;
+	}
+
+	public String generatePageNavi(SqlSession session, int currentPage) {
+		int totalCount = getTotalCount(session);	// 전체 게시물의 갯수를 동적으로 가지고 와야함
+		int recordCountPerPage = 10;
+		int naviTotalCount = 5;
+		int totalNaviCount;
+		if(totalCount % recordCountPerPage > 0) {	// 소숫점일때 1을 더해주고 아니면 말고
+			totalNaviCount = totalCount / recordCountPerPage + 1;
+		}else {
+			totalNaviCount = totalCount / recordCountPerPage;
+		}
+		int naviCountPerPage = 5;	// 페이지 숫자를 5까지만 할것이다 할때 5
+		// currentPage			startNavi		 endNavi
+		//	1,2,3,4,5				1			 	5
+		//	6,7,8,9,10			    6			   10	
+		//	11,12,13,14,15			11			   15	 	
+		//	16,17,18,19,20			16             20
+		int startNavi = ((currentPage -1)/naviCountPerPage) * naviCountPerPage + 1;
+		int endNavi = startNavi + naviCountPerPage - 1;
+		if(endNavi > totalNaviCount) {
+			endNavi = totalNaviCount;
+		}
+		boolean needPrev = true;
+		boolean needNext = true;
+		if(startNavi == 1) {
+			needPrev = false;
+		}
+		if(endNavi == naviTotalCount) {
+			needNext = false;
+		}
+		StringBuilder result = new StringBuilder();
+		if(needPrev) {
+			result.append("<a href='/notice/list.do?currentPage="+(startNavi-1)+"'>[이전]</a>");
+		}
+		for(int i = startNavi; i <= endNavi; i++) {
+			result.append("<a href='/notice/list.do?currentPage="+i+"'>"+i+"</a>&nbsp;&nbsp;");
+		}
+		if(needNext) {
+			result.append("<a href='/notice/list.do?currentPage="+(endNavi+1)+"'>[다음]</a>");
+		}
+		return result.toString();
+	}
 
 }

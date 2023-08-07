@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 import com.kh.common.SqlSessionTemplate;
 import com.kh.notice.model.dao.NoticeDAO;
 import com.kh.notice.model.vo.Notice;
+import com.kh.notice.model.vo.PageData;
 
 public class NoticeService {
 	
@@ -41,13 +42,15 @@ public class NoticeService {
 		return result;
 	}
 
-	public List<Notice> selectNoticeList(int currentPage) {
+	public PageData selectNoticeList(int currentPage) {
 		// 서비스, DAO, mapper.xml 순으로 코딩
 		// 서비스는 연결생성, DAO 호출, 연결 해제
 		SqlSession session = SqlSessionTemplate.getSqlSession();
 		List<Notice> nList = nDao.selectNoticeList(session, currentPage);
+		String pageNavi = nDao.generatePageNavi(session, currentPage);
+		PageData pd = new PageData(nList, pageNavi);
 		session.close();
-		return nList;
+		return pd;
 	}
 
 	public Notice selectOneByNo(int noticeNo) {

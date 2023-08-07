@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.kh.notice.model.service.NoticeService;
 import com.kh.notice.model.vo.Notice;
+import com.kh.notice.model.vo.PageData;
 
 /**
  * Servlet implementation class ListController
@@ -39,12 +40,15 @@ public class ListController extends HttpServlet {
 		// 여러개 데이터니까 List로 받았고 쿼리문을 보니 매개변수는 필요가 없는 상태임
 		String page = request.getParameter("currentPage") != null ? request.getParameter("currentPage") : "1";
 		int currentPage = Integer.parseInt(page);
-		List<Notice> nList = service.selectNoticeList(currentPage);
+		PageData pd = service.selectNoticeList(currentPage);
+		List<Notice> nList = pd.getnList();
+		String pageNavi = pd.getPageNavi();
 		// nList는 없어도 널이 아니라서 isEmpt()로 비어있는지 체크
 		// 비슷한 방법으로 nList.size() > 0 가 있음
 		if(!nList.isEmpty()) {
 			// 성공하면 list.jsp로 이동
 			request.setAttribute("nList", nList);
+			request.setAttribute("pageNavi", pageNavi);
 			RequestDispatcher view = request.getRequestDispatcher("/WEB-INF/views/notice/list.jsp");
 			view.forward(request, response);
 		}else {
